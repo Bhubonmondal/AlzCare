@@ -36,10 +36,8 @@ Alzheimer’s is tough, but you’re not alone! AlzCare combines **technology + 
 
 - Flutter 🐦  
 - Firebase (Auth, Firestore, Messaging) 🔥  
-- Provider (State Management) 📦  
 - flutter_local_notifications ⏰  
 - geolocator 🌍  
-- dialog_flowtter 🤖  
 - url_launcher 📲  
 
 ---

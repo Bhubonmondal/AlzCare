@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "475287115559",
+    "project_id": "alzcare-ffc04",
+    "storage_bucket": "alzcare-ffc04.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:475287115559:android:8e4aabdb3bf9671da37b02",
+        "android_client_info": {
+          "package_name": "com.example.alzcare.alzcare"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDsg16Cs7rONeB-pfbeEjaHBPfBOgRu2UY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

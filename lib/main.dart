@@ -7,6 +7,7 @@ import 'package:alzcare/screen/patient_side/emergency_call_screen.dart';
 import 'package:alzcare/screen/patient_side/face_game.dart';
 import 'package:alzcare/screen/patient_side/patient_dashboard.dart';
 import 'package:alzcare/screen/patient_side/pill_reminder_screen.dart';
+import 'package:alzcare/screen/patient_side/therapist_chatbot.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -55,6 +56,7 @@ class MyApp extends StatelessWidget {
         '/login': (context) => const Login(),
         '/pill_reminder': (context) => const PillReminderScreen(),
         '/emergency_call': (context) => const EmergencyCallScreen(),
+        '/therapist_chatbot': (context) => const TherapistChatbot(),
         '/face_game': (context) => FaceGameScreen(),
       },
     );

@@ -1,7 +1,9 @@
 import 'package:alarm/alarm.dart';
 import 'package:alzcare/firebase_options.dart';
+import 'package:alzcare/screen/care_giver_side/add_pill_page.dart';
 import 'package:alzcare/screen/care_giver_side/caregiver_dashboard.dart';
 import 'package:alzcare/screen/create_account.dart';
+import 'package:alzcare/screen/guest_page.dart';
 import 'package:alzcare/screen/login.dart';
 import 'package:alzcare/screen/patient_side/emergency_call_screen.dart';
 import 'package:alzcare/screen/patient_side/face_game.dart';
@@ -48,16 +50,51 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: "AlzCare",
       debugShowCheckedModeBanner: false,
-      routes: {
-        '/': (context) => const Login(),
-        '/caregiver': (context) => const CaregiverDashboard(),
-        '/patient': (context) => const PatientDashboard(),
-        '/signup': (context) => const CreateAccount(),
-        '/login': (context) => const Login(),
-        '/pill_reminder': (context) => const PillReminderScreen(),
-        '/emergency_call': (context) => const EmergencyCallScreen(),
-        '/therapist_chatbot': (context) => const TherapistChatbot(),
-        '/face_game': (context) => FaceGameScreen(),
+      onGenerateRoute: (settings) {
+        switch (settings.name) {
+          case '/':
+            return MaterialPageRoute(builder: (_) => const Login());
+
+          case '/caregiver':
+            return MaterialPageRoute(builder: (_) => const CaregiverDashboard());
+
+          case '/patient':
+            return MaterialPageRoute(builder: (_) => const PatientDashboard());
+
+          case '/signup':
+            return MaterialPageRoute(builder: (_) => const CreateAccount());
+
+          case '/pill_reminder':
+            return MaterialPageRoute(builder: (_) => const PillReminderScreen());
+
+          case '/emergency_call':
+            return MaterialPageRoute(builder: (_) => const EmergencyCallScreen());
+
+          case '/therapist_chatbot':
+            return MaterialPageRoute(builder: (_) => const TherapistChatbot());
+
+          case '/face_game':
+            return MaterialPageRoute(builder: (_) => FaceGameScreen());
+
+          case '/guest':
+            return MaterialPageRoute(builder: (_) => const GuestPage());
+
+          case '/add_pill':
+            final args = settings.arguments as Map<String, dynamic>;
+            return MaterialPageRoute(
+              builder: (_) => AddPillPage(
+                patientId: args['patientId'],
+                patientEmail: args['patientEmail'],
+              ),
+            );
+
+          default:
+            return MaterialPageRoute(
+              builder: (_) => const Scaffold(
+                body: Center(child: Text("Page not found")),
+              ),
+            );
+        }
       },
     );
   }

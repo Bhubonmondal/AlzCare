@@ -100,7 +100,7 @@ class _CreateAccountState extends State<CreateAccount> {
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.pop(context);
+                  Navigator.pushReplacementNamed(context, '/guest');
                 },
                 child: Text("Continue As Guest"),
               ),

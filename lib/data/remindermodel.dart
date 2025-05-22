@@ -11,12 +11,14 @@ class ReminderModel {
     required this.minute,
   });
 
-  Map<String, dynamic> toMap() => {
-    'id': id,
-    'name': name,
-    'hour': hour,
-    'minute': minute,
-  };
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'hour': hour,
+      'minute': minute,
+    };
+  }
 
   factory ReminderModel.fromMap(Map<String, dynamic> map) {
     return ReminderModel(

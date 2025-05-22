@@ -16,7 +16,8 @@ class PillReminderScreen extends StatefulWidget {
 }
 
 class _PillReminderScreenState extends State<PillReminderScreen> {
-  List<ReminderModel> _reminders = [];
+  List<ReminderModel> _userReminders = [];
+  List<ReminderModel> _caregiverReminders = [];
   late SharedPreferences _prefs;
   final user = FirebaseAuth.instance.currentUser;
 
@@ -24,20 +25,92 @@ class _PillReminderScreenState extends State<PillReminderScreen> {
   void initState() {
     super.initState();
     Alarm.init();
-    _loadReminders();
+    _loadUserReminders();
+    _listenToCaregiverReminders();
   }
 
-  Future<void> _loadReminders() async {
+  Future<void> _loadUserReminders() async {
     _prefs = await SharedPreferences.getInstance();
     final saved = _prefs.getStringList('reminders') ?? [];
     setState(() {
-      _reminders = saved.map((e) => ReminderModel.fromMap(jsonDecode(e))).toList();
+      _userReminders =
+          saved.map((e) => ReminderModel.fromMap(jsonDecode(e))).toList();
+    });
+  }
+
+  void _listenToCaregiverReminders() {
+    if (user == null) return;
+
+    FirebaseFirestore.instance
+        .collection('meds')
+        .where('email', isEqualTo: user!.email)
+        .snapshots()
+        .listen((snapshot) async {
+      final List<ReminderModel> caregiverMeds = [];
+
+      for (var doc in snapshot.docs) {
+        final data = doc.data();
+        final medTime = data['med_time'];
+        final name = data['med_name'];
+
+        if (medTime == null || name == null) continue;
+
+        final medTimeStr = medTime.toString().padLeft(4, '0');
+        final hour = int.tryParse(medTimeStr.substring(0, 2)) ?? 0;
+        final minute = int.tryParse(medTimeStr.substring(2, 4)) ?? 0;
+        final id = doc.id.hashCode;
+
+        final reminder = ReminderModel(
+          id: id,
+          name: name,
+          hour: hour,
+          minute: minute,
+        );
+
+        caregiverMeds.add(reminder);
+
+        final now = DateTime.now();
+        DateTime alarmTime = DateTime(
+          now.year,
+          now.month,
+          now.day,
+          hour,
+          minute,
+        );
+
+        if (alarmTime.isBefore(now)) {
+          alarmTime = alarmTime.add(const Duration(days: 1));
+        }
+
+        final isSet = await Alarm.getAlarm(id) != null;
+        if (!isSet) {
+          await Alarm.set(
+            alarmSettings: AlarmSettings(
+              id: id,
+              dateTime: alarmTime,
+              assetAudioPath: 'assets/alarm.mp3',
+              loopAudio: true,
+              vibrate: true,
+              volume: 1.0,
+              notificationSettings: NotificationSettings(
+                stopButton: "Stop",
+                title: 'Pill Reminder',
+                body: name,
+              ),
+            ),
+          );
+        }
+      }
+
+      setState(() {
+        _caregiverReminders = caregiverMeds;
+      });
     });
   }
 
   Future<void> _saveReminder(ReminderModel reminder) async {
-    _reminders.add(reminder);
-    final jsonList = _reminders.map((e) => jsonEncode(e.toMap())).toList();
+    _userReminders.add(reminder);
+    final jsonList = _userReminders.map((e) => jsonEncode(e.toMap())).toList();
     await _prefs.setStringList('reminders', jsonList);
 
     if (user != null) {
@@ -51,10 +124,10 @@ class _PillReminderScreenState extends State<PillReminderScreen> {
   }
 
   Future<void> _deleteReminder(int index) async {
-    final reminder = _reminders[index];
+    final reminder = _userReminders[index];
     Alarm.stop(reminder.id);
-    _reminders.removeAt(index);
-    final jsonList = _reminders.map((e) => jsonEncode(e.toMap())).toList();
+    _userReminders.removeAt(index);
+    final jsonList = _userReminders.map((e) => jsonEncode(e.toMap())).toList();
     await _prefs.setStringList('reminders', jsonList);
 
     if (user != null) {
@@ -142,14 +215,11 @@ class _PillReminderScreenState extends State<PillReminderScreen> {
                   volume: 1.0,
                   notificationSettings: NotificationSettings(
                     stopButton: "Stop",
-                    title: "Pill Reminder",
+                    title: 'Pill Reminder',
                     body: medicineController.text,
                   ),
                 ),
               );
-
-
-
 
               await _saveReminder(reminder);
               Navigator.pop(context);
@@ -164,22 +234,32 @@ class _PillReminderScreenState extends State<PillReminderScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final allReminders = [..._caregiverReminders, ..._userReminders];
+
     return Scaffold(
       appBar: AppBar(title: const Text("Pill Reminder")),
-      body: _reminders.isEmpty
+      body: allReminders.isEmpty
           ? const Center(child: Text("No reminders yet"))
           : ListView.builder(
-        itemCount: _reminders.length,
+        itemCount: allReminders.length,
         itemBuilder: (context, index) {
-          final r = _reminders[index];
+          final r = allReminders[index];
+          final isUserReminder = _userReminders.any((e) => e.id == r.id);
+
           return ListTile(
             leading: const Icon(Icons.medication),
             title: Text(r.name),
-            subtitle: Text("${r.hour.toString().padLeft(2, '0')}:${r.minute.toString().padLeft(2, '0')}"),
-            trailing: IconButton(
-              icon: const Icon(Icons.delete),
-              onPressed: () => _deleteReminder(index),
+            subtitle: Text(
+              "${r.hour.toString().padLeft(2, '0')}:${r.minute.toString().padLeft(2, '0')}" +
+                  (isUserReminder ? " (You)" : " (Caregiver)"),
             ),
+            trailing: isUserReminder
+                ? IconButton(
+              icon: const Icon(Icons.delete),
+              onPressed: () => _deleteReminder(
+                  _userReminders.indexWhere((e) => e.id == r.id)),
+            )
+                : null,
           );
         },
       ),

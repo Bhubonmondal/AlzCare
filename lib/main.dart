@@ -56,7 +56,7 @@ class MyApp extends StatelessWidget {
             return MaterialPageRoute(builder: (_) => const Login());
 
           case '/caregiver':
-            return MaterialPageRoute(builder: (_) => const CaregiverDashboard());
+            return MaterialPageRoute(builder: (_) =>  CareGiverDashboard());
 
           case '/patient':
             return MaterialPageRoute(builder: (_) => const PatientDashboard());

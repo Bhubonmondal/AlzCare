@@ -23,7 +23,7 @@ class _GuestPageState extends State<GuestPage> {
     if (_currentPage < _imagePaths.length - 1) {
       _controller.nextPage(duration: Duration(milliseconds: 300), curve: Curves.easeInOut);
     } else {
-      Navigator.pushReplacementNamed(context, '/login');
+      Navigator.pushReplacementNamed(context, '/');
     }
   }
 
@@ -57,7 +57,7 @@ class _GuestPageState extends State<GuestPage> {
               onPressed: _nextPage,
               style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.symmetric(vertical: 16),
-                backgroundColor: Colors.black.withOpacity(0.7),
+                backgroundColor: Colors.black.withValues(alpha:  0.7),
               ),
               child: Text(
                 _currentPage == _imagePaths.length - 1 ? "Go to Login" : "Next",

@@ -1,186 +1,222 @@
+import 'package:alzcare/screen/care_giver_side/patient_details_page.dart';
+import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 
-class CaregiverDashboard extends StatefulWidget {
-  const CaregiverDashboard({super.key});
+import '../../data/quotes.dart';
+
+class CareGiverDashboard extends StatefulWidget {
+  const CareGiverDashboard({super.key});
 
   @override
-  State<CaregiverDashboard> createState() => _CaregiverDashboardState();
+  _CareGiverDashboardState createState() => _CareGiverDashboardState();
 }
 
-class _CaregiverDashboardState extends State<CaregiverDashboard> {
-  final _emailController = TextEditingController();
-  final _auth = FirebaseAuth.instance;
-  final _firestore = FirebaseFirestore.instance;
+class _CareGiverDashboardState extends State<CareGiverDashboard> {
+  final TextEditingController _emailController = TextEditingController();
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  void _logout() async {
-    await _auth.signOut();
-    Navigator.pushReplacementNamed(context, '/');
+  String? _currentUserEmail;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentUserEmail = FirebaseAuth.instance.currentUser?.email;
   }
 
-  Future<void> _addPatientDialog() async {
-    _emailController.clear();
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text("Add Patient"),
-          content: TextField(
-            controller: _emailController,
-            decoration: const InputDecoration(labelText: "Patient Email"),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("Cancel"),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                final email = _emailController.text.trim();
-                Navigator.pop(context); // Close dialog
-                await _addPatient(email);
-              },
-              child: const Text("Add"),
-            ),
-          ],
-        );
-      },
-    );
-  }
+  Future<void> _addPatient() async {
+    final enteredEmail = _emailController.text.trim();
 
-  Future<void> _addPatient(String email) async {
+    if (enteredEmail.isEmpty) return;
+
     try {
-      final caregiverId = _auth.currentUser!.uid;
-
-      // 1. Check if user exists and is not a caregiver
-      final userQuery = await _firestore
+      // Check if the user exists and is not a caregiver
+      final snapshot = await _firestore
           .collection('users')
-          .where('email', isEqualTo: email)
+          .where('email', isEqualTo: enteredEmail)
+          .where('isCareGiver', isEqualTo: false)
           .limit(1)
           .get();
 
-      if (userQuery.docs.isEmpty) {
-        _showMessage("No user found with this email.");
+      if (snapshot.docs.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Invalid patient email or already a caregiver')),
+        );
         return;
       }
 
-      final userDoc = userQuery.docs.first;
-      final userId = userDoc.id;
-      final isCareGiver = userDoc['isCareGiver'] ?? false;
-
-      if (isCareGiver == true) {
-        _showMessage("This user is a caregiver, not a patient.");
-        return;
-      }
-
-      // 2. Check if already added
-      final patientDoc = await _firestore
-          .collection('caregivers')
-          .doc(caregiverId)
-          .collection('patients')
-          .doc(userId)
+      // Check if this patient is already added for this caregiver
+      final existing = await _firestore
+          .collection('care_givers')
+          .where('email', isEqualTo: _currentUserEmail)
+          .where('patient_email', isEqualTo: enteredEmail)
+          .limit(1)
           .get();
 
-      if (patientDoc.exists) {
-        _showMessage("This patient is already added.");
+      if (existing.docs.isNotEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Patient is already added')),
+        );
         return;
       }
 
-      // 3. Add patient
-      await _firestore
-          .collection('caregivers')
-          .doc(caregiverId)
-          .collection('patients')
-          .doc(userId)
-          .set({
-        'email': email,
-        'linkedAt': Timestamp.now(),
+      // Add patient-caregiver relationship
+      await _firestore.collection('care_givers').add({
+        'email': _currentUserEmail,
+        'patient_email': enteredEmail,
+        'createdAt': Timestamp.now(),
       });
 
-      _showMessage("Patient added successfully.");
-      setState(() {});
+      _emailController.clear();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Patient added successfully')),
+      );
     } catch (e) {
-      _showMessage("Error: ${e.toString()}");
+      print('Error adding patient: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
     }
   }
 
-  void _showMessage(String msg) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
+  void _logout() async {
+    await FirebaseAuth.instance.signOut();
+    Navigator.pushReplacementNamed(context, '/');
   }
 
   @override
   Widget build(BuildContext context) {
-    final caregiverId = _auth.currentUser!.uid;
+    if (_currentUserEmail == null) {
+      return Scaffold(
+        body: Center(child: Text('User not logged in')),
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Caregiver Dashboard"),
+        title: Text('Care Giver Dashboard'),
         actions: [
           IconButton(
-            onPressed: _logout,
             icon: const Icon(Icons.logout),
-            tooltip: "Logout",
+            onPressed: _logout,
           ),
         ],
       ),
-      body: Column(
-        children: [
-          const SizedBox(height: 20),
-          ElevatedButton.icon(
-            onPressed: _addPatientDialog,
-            icon: const Icon(Icons.person_add),
-            label: const Text("Add Patient"),
-          ),
-          const SizedBox(height: 20),
-          Expanded(
-            child: StreamBuilder<QuerySnapshot>(
-              stream: _firestore
-                  .collection('caregivers')
-                  .doc(caregiverId)
-                  .collection('patients')
-                  .orderBy('linkedAt', descending: true)
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  return const Center(child: Text("Something went wrong"));
-                }
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                final patients = snapshot.data!.docs;
-
-                if (patients.isEmpty) {
-                  return const Center(child: Text("No patients added yet."));
-                }
-
-                return ListView.builder(
-                  itemCount: patients.length,
-                  itemBuilder: (context, index) {
-                    final patient = patients[index];
-                    final email = patient['email'];
-
-                    return ListTile(
-                      title: Text(email),
-                      trailing: const Icon(Icons.arrow_forward_ios),
-                      onTap: () {
-                        Navigator.pushNamed(
-                          context,
-                          '/add_pill',
-                          arguments: {
-                            'patientId': patient.id,
-                            'patientEmail': email,
-                          },
-                        );
-                      },
-                    );
-                  },
-                );
-              },
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            SizedBox(height: 2.0),
+            Text(
+              "Today's Quote: ${quotes()}",
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
             ),
-          ),
-        ],
+            SizedBox(height: 25),
+            TextField(
+              controller: _emailController,
+              decoration: InputDecoration(
+                labelText: 'Enter patient email',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: _addPatient,
+              child: Text('Add Patient'),
+            ),
+            SizedBox(height: 20),
+
+            // StreamBuilder for real-time updates of patients list
+            Expanded(
+              child: StreamBuilder<QuerySnapshot>(
+                stream: _firestore
+                    .collection('care_givers')
+                    .where('email', isEqualTo: _currentUserEmail)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return Center(child: Text('Error loading patients'));
+                  }
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+
+                  final docs = snapshot.data?.docs ?? [];
+
+                  if (docs.isEmpty) {
+                    return Center(child: Text('No patients added yet.'));
+                  }
+
+                  return ListView.builder(
+                    itemCount: docs.length,
+                    itemBuilder: (context, index) {
+                      final patientEmail = docs[index]['patient_email'] as String;
+
+                      return Card(
+                        child: ListTile(
+                          leading: Icon(Icons.person),
+                          title: Text(patientEmail),
+                          subtitle: Text("Tap to add medicine or bio"),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => PatientDetailsPage(
+                                  patientEmail: patientEmail,
+                                ),
+                              ),
+                            );
+                          },
+                          trailing: IconButton(
+                            icon: Icon(Icons.delete, color: Colors.red),
+                            onPressed: () async {
+                              // Confirm before deleting patient relation
+                              final confirm = await showDialog<bool>(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: Text('Remove Patient'),
+                                  content: Text('Are you sure you want to remove this patient?'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(context, false),
+                                      child: Text('Cancel'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(context, true),
+                                      child: Text('Remove'),
+                                    ),
+                                  ],
+                                ),
+                              );
+
+                              if (confirm == true) {
+                                try {
+                                  await _firestore
+                                      .collection('care_givers')
+                                      .doc(docs[index].id)
+                                      .delete();
+
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('Patient removed')),
+                                  );
+                                } catch (e) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('Error removing patient: $e')),
+                                  );
+                                }
+                              }
+                            },
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

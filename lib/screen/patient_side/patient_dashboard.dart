@@ -1,5 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -19,6 +21,8 @@ class _PatientDashboardState extends State<PatientDashboard> {
 
   Future<void> _handleEmergencyCall() async {
     final prefs = await SharedPreferences.getInstance();
+    final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+    final user = FirebaseAuth.instance.currentUser;
     String? emergencyNumber = prefs.getString('emergency_number');
 
     if (emergencyNumber == null || emergencyNumber.isEmpty) {
@@ -29,6 +33,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
         builder: (context) => AlertDialog(
           title: const Text('Set Emergency Number'),
           content: TextField(
+            autofocus: true,
             controller: controller,
             keyboardType: TextInputType.phone,
             decoration: const InputDecoration(hintText: 'Enter phone number'),
@@ -44,6 +49,23 @@ class _PatientDashboardState extends State<PatientDashboard> {
                 if (number.isNotEmpty) {
                   await prefs.setString('emergency_number', number);
                   emergencyNumber = number;
+
+                  Position position = await Geolocator.getCurrentPosition(
+                    locationSettings: AndroidSettings(
+                      accuracy: LocationAccuracy.best,
+                      distanceFilter: 10,
+                    )
+                  );
+
+                  await _firestore.collection('emergency_contact').doc(user?.uid).set({
+                    'email': user?.email ?? 'Unknown',
+                    'emergency_contact': number,
+                    'current_location': {
+                      'latitude': position.latitude,
+                      'longitude': position.longitude,
+                    },
+                    'timestamp': FieldValue.serverTimestamp(),
+                  });
                 }
                 Navigator.pop(context);
               },
@@ -81,6 +103,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -88,6 +111,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
         title: const Text("Patient Dashboard"),
         actions: [
           IconButton(
+            tooltip: "log out",
             icon: const Icon(Icons.logout),
             onPressed: _logout,
           ),
@@ -127,12 +151,77 @@ class _PatientDashboardState extends State<PatientDashboard> {
       ),
 
       // Red Floating Emergency Button
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.red,
+      floatingActionButton: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.red,
+          shape: const CircleBorder(),
+          padding: const EdgeInsets.all(16.0),
+        ),
         onPressed: _handleEmergencyCall,
-        tooltip: 'Emergency Call',
-        child: const Icon(Icons.call),
+        onLongPress: _editEmergencyNumber,
+        child: const Icon(Icons.call, color: Colors.white, size: 32.0),
       ),
     );
   }
+
+  void _editEmergencyNumber() async {
+    final prefs = await SharedPreferences.getInstance();
+    final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+    final user = FirebaseAuth.instance.currentUser;
+    String? emergencyNumber = prefs.getString('emergency_number');
+
+    final controller = TextEditingController();
+    controller.text = emergencyNumber ?? '';
+
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Update Emergency Number'),
+        content: TextField(
+          autofocus: true,
+          controller: controller,
+          keyboardType: TextInputType.phone,
+          decoration: const InputDecoration(hintText: 'Enter phone number'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () async {
+              final number = controller.text.trim();
+              if (number.isNotEmpty) {
+                await prefs.setString('emergency_number', number);
+                emergencyNumber = number;
+
+                Position position = await Geolocator.getCurrentPosition(
+                  locationSettings: AndroidSettings(
+                    accuracy: LocationAccuracy.best,
+                    distanceFilter: 10,
+                  )
+                );
+
+                await _firestore.collection('emergency_contact').doc(user?.uid).set({
+                  'email': user?.email ?? 'Unknown',
+                  'emergency_contact': number,
+                  'current_location': {
+                    'latitude': position.latitude,
+                    'longitude': position.longitude,
+                  },
+                  'timestamp': FieldValue.serverTimestamp(),
+                });
+              }
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Emergency number updated.')),
+              );
+              Navigator.pop(context);
+            },
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+  }
+
 }

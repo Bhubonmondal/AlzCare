@@ -5,7 +5,6 @@ import 'package:alzcare/screen/care_giver_side/caregiver_dashboard.dart';
 import 'package:alzcare/screen/create_account.dart';
 import 'package:alzcare/screen/guest_page.dart';
 import 'package:alzcare/screen/login.dart';
-import 'package:alzcare/screen/patient_side/emergency_call_screen.dart';
 import 'package:alzcare/screen/patient_side/face_game.dart';
 import 'package:alzcare/screen/patient_side/patient_dashboard.dart';
 import 'package:alzcare/screen/patient_side/pill_reminder_screen.dart';
@@ -18,6 +17,11 @@ Future<void> requestPermissions() async {
   var phoneStatus = await Permission.phone.status;
   if (!phoneStatus.isGranted) {
     phoneStatus = await Permission.phone.request();
+  }
+
+  var locationStatus = await Permission.location.status;
+  if (!locationStatus.isGranted) {
+    locationStatus = await Permission.location.request();
   }
 
   var notificationStatus = await Permission.notification.status;
@@ -67,8 +71,6 @@ class MyApp extends StatelessWidget {
           case '/pill_reminder':
             return MaterialPageRoute(builder: (_) => const PillReminderScreen());
 
-          case '/emergency_call':
-            return MaterialPageRoute(builder: (_) => const EmergencyCallScreen());
 
           case '/therapist_chatbot':
             return MaterialPageRoute(builder: (_) => const TherapistChatbot());

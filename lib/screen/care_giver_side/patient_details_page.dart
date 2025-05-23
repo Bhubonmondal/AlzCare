@@ -1,6 +1,7 @@
 import 'package:alzcare/data/textfield_design.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PatientDetailsPage extends StatefulWidget {
   final String patientEmail;
@@ -34,6 +35,7 @@ class _PatientDetailsPageState extends State<PatientDetailsPage> {
   void initState() {
     super.initState();
     _fetchBio();
+    _fetchLocation();
   }
 
   @override
@@ -75,6 +77,45 @@ class _PatientDetailsPageState extends State<PatientDetailsPage> {
 
     setState(() => _isLoading = false);
   }
+
+  Future<void> _fetchLocation() async {
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('emergency_contact')
+          .where('email', isEqualTo: widget.patientEmail)
+          .get();
+
+      if (snapshot.docs.isNotEmpty) {
+        final data = snapshot.docs.first.data();
+        final location = data['current_location'];
+
+        final lat = location['latitude']?.toString();
+        final lng = location['longitude']?.toString();
+
+        if (lat != null && lng != null) {
+          setState(() {
+            patientCurrentLocation = "$lat, $lng";
+          });
+        } else {
+          setState(() {
+            patientCurrentLocation = "Coordinates missing";
+          });
+        }
+      } else {
+        setState(() {
+          patientCurrentLocation = "No location found for this patient";
+        });
+      }
+    } catch (e) {
+      setState(() {
+        patientCurrentLocation = "Error fetching location: $e";
+      });
+    }
+  }
+
+
+
+
 
   Future<void> _saveBio() async {
     if (_formKey.currentState!.validate()) {
@@ -162,6 +203,8 @@ class _PatientDetailsPageState extends State<PatientDetailsPage> {
     }
   }
 
+  String patientCurrentLocation = "0.00, 0.00";
+
   @override
   Widget build(BuildContext context) {
     if (_isLoading) return const Center(child: CircularProgressIndicator());
@@ -205,6 +248,30 @@ class _PatientDetailsPageState extends State<PatientDetailsPage> {
 
             Text('Patient Details',style: TextStyle(fontSize: 24)),
             Divider(),
+            Text(patientCurrentLocation),
+            SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () async {
+                final parts = patientCurrentLocation.split(', ');
+                if (parts.length == 2) {
+                  final lat = parts[0];
+                  final lng = parts[1];
+                  final url = 'geo:$lat,$lng?q=$lat,$lng(Patient Location)';
+
+                  if (await canLaunch(url)) {
+                    await launch(url); // This opens in Google Maps app
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Could not launch Google Maps")),
+                    );
+                  }
+                }
+              },
+              child: Text("View in Google Map"),
+            ),
+
+
+
 
             _isEditing ? _buildForm() : _buildDisplay(),
             const SizedBox(height: 10),
@@ -218,7 +285,6 @@ class _PatientDetailsPageState extends State<PatientDetailsPage> {
               },
               child: Text(_isEditing ? 'Save Bio' : 'Update Details'),
             ),
-
 
 
 

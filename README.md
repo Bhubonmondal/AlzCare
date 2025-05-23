@@ -1,71 +1,16 @@
-# AlzCare 💙🧠✨
+# alzcare
 
-Welcome to **AlzCare** — your ultimate companion app designed to support Alzheimer's patients and their caregivers with love, care, and smart technology! 🚀💪
+A new Flutter project.
 
----
+## Getting Started
 
-## 🌟 Features That Make Life Easier & Happier 🌟
+This project is a starting point for a Flutter application.
 
-- 💊 **Medication Reminders**  
-  Never miss your meds again! Get timely alerts to stay on track. ⏰✅
+A few resources to get you started if this is your first Flutter project:
 
-- 🧩 **Brain-Boosting Games**  
-  Fun and simple puzzles to keep your memory sharp and your mind active! 🎲🧠
+- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
+- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
 
-- 🚨 **Emergency SOS**  
-  One-tap emergency calls to get help instantly when you need it most! 📞🔥
-
-- 🤖 **Therapist Chatbot**  
-  Your friendly AI therapist is here 24/7 to listen, support, and guide you. 💬💖
-
-- 👥 **Caregiver Tracker**  
-  Share real-time location and updates with your loved ones for peace of mind. 🗺️👨‍👩‍👧‍👦
-
-- 🗓️ **Daily Activity Planner**  
-  Organize your day with easy reminders and notes. Stay focused and calm! 📝✨
-
----
-
-## 💡 Why Choose AlzCare?
-
-Alzheimer’s is tough, but you’re not alone! AlzCare combines **technology + compassion** to make everyday life safer, happier, and more connected. Whether you’re the patient or the caregiver, this app is designed with YOU in mind! 💙🙌
-
----
-
-## 🚀 Tech Stack & Packages Used
-
-- Flutter 🐦  
-- Firebase (Auth, Firestore, Messaging) 🔥  
-- flutter_local_notifications ⏰  
-- geolocator 🌍  
-- url_launcher 📲  
-
----
-
-## 🎯 How to Use AlzCare
-
-1. Download & install the app 📲  
-2. Register as Patient or Caregiver 🧑‍⚕️👩‍⚕️  
-3. Set medication reminders 💊  
-4. Play memory games 🧩  
-5. Chat with your AI therapist anytime 🤖💬  
-6. Use emergency SOS & caregiver tracking for safety 🚨👀  
-
----
-
-## 🤝 Contributions Welcome!
-
-Want to make AlzCare even better? Feel free to open issues or submit pull requests. Let’s build a supportive community together! 💪❤️
-
----
-
-## 📜 License
-
-This project is licensed under the MIT License.
-
----
-
-**AlzCare** — Caring for minds, supporting hearts, empowering lives! 💙🧠🌈
-
-
-![App Thoughts](app_thoughts.jpeg)
+For help getting started with Flutter development, view the
+[online documentation](https://docs.flutter.dev/), which offers tutorials,
+samples, guidance on mobile development, and a full API reference.

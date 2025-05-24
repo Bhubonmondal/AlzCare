@@ -11,16 +11,18 @@ Future<void> createAccountController(
     bool isCareGiver,
     ) async {
   if (email.isEmpty || password.isEmpty || cpassword.isEmpty) {
-    ScaffoldMessenger.of(context).setState(() {
-      "Please fill all the fields";
-    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Please fill all the fields")),
+    );
+
     return;
   }
 
   if (password != cpassword) {
-    ScaffoldMessenger.of(context).setState(() {
-      "Passwords do not match";
-    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Passwords do not match")),
+    );
+
     return;
   }
 
@@ -44,9 +46,11 @@ Future<void> createAccountController(
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool('isCareGiver', isCareGiver);
 
-    ScaffoldMessenger.of(context).setState(() {
-      "Account created successfully";
-    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Account created successfully")),
+    );
+
     Navigator.pushReplacementNamed(context, '/login');
   } on FirebaseAuthException catch (e) {
     String errorMessage;
@@ -68,14 +72,14 @@ Future<void> createAccountController(
         errorMessage = "An error occurred: ${e.message}";
         debugPrint(e.message);
     }
-
-    ScaffoldMessenger.of(context).setState(() {
-      errorMessage;
-    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(errorMessage)),
+    );
 
   } catch (e) {
-    ScaffoldMessenger.of(context).setState(() {
-      "Unexpected error: ${e.toString()}";
-    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(e.toString())),
+    );
+
   }
 }

@@ -120,6 +120,8 @@ class _LoginState extends State<Login> {
         padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 50.0),
         child: ListView(
           children: [
+            Image(width: 150, height: 150, image: AssetImage("assets/images/app_logo.jpeg")),
+            SizedBox(height: 20),
             Text(
               "Today's Quote: ${quotes()}",
               style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),

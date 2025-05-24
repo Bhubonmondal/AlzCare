@@ -107,6 +107,7 @@ class _CareGiverDashboardState extends State<CareGiverDashboard> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
+
             SizedBox(height: 2.0),
             Text(
               "Today's Quote: ${quotes()}",
@@ -123,7 +124,7 @@ class _CareGiverDashboardState extends State<CareGiverDashboard> {
             SizedBox(height: 10),
             ElevatedButton(
               onPressed: _addPatient,
-              child: Text('Add Patient'),
+              child: Text('Add Patient '),
             ),
             SizedBox(height: 20),
 

@@ -119,35 +119,77 @@ class _PatientDashboardState extends State<PatientDashboard> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: ListView(
+        child: GridView.count(
+          crossAxisCount: 2, // 2 columns
+          padding: const EdgeInsets.all(16.0),
+          crossAxisSpacing: 16,
+          mainAxisSpacing: 16,
+          shrinkWrap: true, // Use inside a Column or ListView
+          physics: const NeverScrollableScrollPhysics(), // Avoid nested scroll issues
           children: [
-            ElevatedButton.icon(
-              onPressed: () {
+            GestureDetector(
+              onTap: () {
                 Navigator.pushNamed(context, '/pill_reminder');
               },
-              icon: const Icon(Icons.notifications),
-              label: const Text(" Pill Reminder"),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Icon(Icons.notifications, size: 48, color: Colors.white),
+                    SizedBox(height: 12),
+                    Text("Pill Reminder", style: TextStyle(color: Colors.white)),
+                  ],
+                ),
+              ),
             ),
-            const SizedBox(height: 12),
-
-            ElevatedButton.icon(
-              onPressed: () {
+            GestureDetector(
+              onTap: () {
                 Navigator.pushNamed(context, '/therapist_chatbot');
               },
-              icon: const Icon(Icons.chat),
-              label: const Text(" Therapist Chatbot"),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.green,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Icon(Icons.chat, size: 48, color: Colors.white),
+                    SizedBox(height: 12),
+                    Text("Therapist Chatbot", style: TextStyle(color: Colors.white)),
+                  ],
+                ),
+              ),
             ),
-            const SizedBox(height: 12),
-
-            ElevatedButton.icon(
-              onPressed: () {
+            GestureDetector(
+              onTap: () {
                 Navigator.pushNamed(context, '/face_game');
               },
-              icon: const Icon(Icons.face),
-              label: const Text(" Face Recognition Game"),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.orange,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Icon(Icons.face, size: 48, color: Colors.white),
+                    SizedBox(height: 12),
+                    Text("Face Game", style: TextStyle(color: Colors.white)),
+                  ],
+                ),
+              ),
             ),
           ],
         ),
+
       ),
 
       // Red Floating Emergency Button

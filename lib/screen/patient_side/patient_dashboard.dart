@@ -180,9 +180,29 @@ class _PatientDashboardState extends State<PatientDashboard> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: const [
-                    Icon(Icons.face, size: 48, color: Colors.white),
+                    Icon(Icons.style, size: 48, color: Colors.white),
                     SizedBox(height: 12),
                     Text("Face Game", style: TextStyle(color: Colors.white)),
+                  ],
+                ),
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(context, '/white_board');
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.grey,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Icon(Icons.draw, size: 48, color: Colors.white),
+                    SizedBox(height: 12),
+                    Text("Drawing", style: TextStyle(color: Colors.white)),
                   ],
                 ),
               ),

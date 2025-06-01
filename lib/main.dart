@@ -5,6 +5,7 @@ import 'package:alzcare/screen/care_giver_side/caregiver_dashboard.dart';
 import 'package:alzcare/screen/create_account.dart';
 import 'package:alzcare/screen/guest_page.dart';
 import 'package:alzcare/screen/login.dart';
+import 'package:alzcare/screen/patient_side/board.dart';
 import 'package:alzcare/screen/patient_side/face_game.dart';
 import 'package:alzcare/screen/patient_side/patient_dashboard.dart';
 import 'package:alzcare/screen/patient_side/pill_reminder_screen.dart';
@@ -74,6 +75,8 @@ class MyApp extends StatelessWidget {
           case '/pill_reminder':
             return MaterialPageRoute(builder: (_) => const PillReminderScreen());
 
+          case '/white_board':
+            return MaterialPageRoute(builder: (_) => const WhiteBoard());
 
           case '/therapist_chatbot':
             return MaterialPageRoute(builder: (_) => const TherapistChatbot());

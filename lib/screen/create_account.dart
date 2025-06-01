@@ -85,17 +85,40 @@ class _CreateAccountState extends State<CreateAccount> {
                   ],
                 ),
                 SizedBox(height: 50),
-                ElevatedButton(
-                  onPressed: () {
-                    createAccountController(
-                      context,
-                      emailController.text,
-                      passwordController.text,
-                      confirmPasswordController.text,
-                      ifChecked,
-                    );
-                  },
-                  child: Text("Sign Up"),
+                Container(
+                  decoration: BoxDecoration(
+                    gradient:  LinearGradient(
+                      colors: [
+                      Color(0xFF9DA1C7),
+                  Color(0xFF9BA9C6),
+                  Color(0xFF91B6BE),
+                  ],
+                ),
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                      padding: EdgeInsets.symmetric(vertical: 14, horizontal: 28),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                    ),
+                    onPressed: () {
+                      createAccountController(
+                        context,
+                        emailController.text,
+                        passwordController.text,
+                        confirmPasswordController.text,
+                        ifChecked,
+                      );
+                    },
+                    child: Text(
+                      "Sign Up",
+                      style: TextStyle(color: Colors.white, fontSize: 16),
+                    ),
+                  ),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,

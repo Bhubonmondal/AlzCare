@@ -166,11 +166,41 @@ class _LoginState extends State<Login> {
               ),
             ),
             SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: isLoading ? null : loginUser,
-              child: isLoading
-                  ? CircularProgressIndicator(color: Colors.white)
-                  : Text("Login"),
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Color(0xFF9DA1C7),
+                    Color(0xFF9BA9C6),
+                    Color(0xFF91B6BE),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(30),
+              ),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                  shadowColor: Colors.transparent,
+                  padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                ),
+                onPressed: isLoading ? null : loginUser,
+                child: isLoading
+                    ? SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    color: Colors.white,
+                    strokeWidth: 2,
+                  ),
+                )
+                    : Text(
+                  "Login",
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
             ),
             SizedBox(height: 20),
             Row(

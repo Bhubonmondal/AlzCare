@@ -125,7 +125,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
           crossAxisSpacing: 16,
           mainAxisSpacing: 16,
           shrinkWrap: true, // Use inside a Column or ListView
-          physics: const NeverScrollableScrollPhysics(), // Avoid nested scroll issues
+          // physics: const NeverScrollableScrollPhysics(), // Avoid nested scroll issues
           children: [
             GestureDetector(
               onTap: () {
@@ -202,7 +202,67 @@ class _PatientDashboardState extends State<PatientDashboard> {
                   children: const [
                     Icon(Icons.draw, size: 48, color: Colors.white),
                     SizedBox(height: 12),
-                    Text("Drawing", style: TextStyle(color: Colors.white)),
+                    Text("Painting", style: TextStyle(color: Colors.white)),
+                  ],
+                ),
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(context, '/memory_game');
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.purple,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Icon(Icons.cached, size: 48, color: Colors.white),
+                    SizedBox(height: 12),
+                    Text("Memory Game", style: TextStyle(color: Colors.white)),
+                  ],
+                ),
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(context, '/name_that_sound');
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.teal,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Icon(Icons.earbuds, size: 48, color: Colors.white),
+                    SizedBox(height: 12),
+                    Text("Name That Sound", style: TextStyle(color: Colors.white)),
+                  ],
+                ),
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(context, '/emotion_matcher');
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.deepOrangeAccent,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Icon(Icons.emoji_emotions, size: 48, color: Colors.white),
+                    SizedBox(height: 12),
+                    Text("Emotion Matcher", style: TextStyle(color: Colors.white)),
                   ],
                 ),
               ),

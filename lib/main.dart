@@ -6,7 +6,10 @@ import 'package:alzcare/screen/create_account.dart';
 import 'package:alzcare/screen/guest_page.dart';
 import 'package:alzcare/screen/login.dart';
 import 'package:alzcare/screen/patient_side/board.dart';
+import 'package:alzcare/screen/patient_side/emotion_matcher.dart';
 import 'package:alzcare/screen/patient_side/face_game.dart';
+import 'package:alzcare/screen/patient_side/memory_game.dart';
+import 'package:alzcare/screen/patient_side/name_that_sound.dart';
 import 'package:alzcare/screen/patient_side/patient_dashboard.dart';
 import 'package:alzcare/screen/patient_side/pill_reminder_screen.dart';
 import 'package:alzcare/screen/patient_side/therapist_chatbot.dart';
@@ -18,6 +21,11 @@ Future<void> requestPermissions() async {
   var phoneStatus = await Permission.phone.status;
   if (!phoneStatus.isGranted) {
     phoneStatus = await Permission.phone.request();
+  }
+
+  var cameraStatus = await Permission.camera.status;
+  if (!cameraStatus.isGranted) {
+    cameraStatus = await Permission.camera.request();
   }
 
   var locationStatus = await Permission.location.status;
@@ -72,11 +80,20 @@ class MyApp extends StatelessWidget {
           case '/signup':
             return MaterialPageRoute(builder: (_) => const CreateAccount());
 
+          case '/name_that_sound':
+            return MaterialPageRoute(builder: (_) => const NameThatSoundGame());
+
           case '/pill_reminder':
             return MaterialPageRoute(builder: (_) => const PillReminderScreen());
 
+          case '/memory_game':
+            return MaterialPageRoute(builder: (_) => const MemoryGame());
+
           case '/white_board':
             return MaterialPageRoute(builder: (_) => const WhiteBoard());
+
+          case '/emotion_matcher':
+            return MaterialPageRoute(builder: (_) => const EmotionMatcher());
 
           case '/therapist_chatbot':
             return MaterialPageRoute(builder: (_) => const TherapistChatbot());

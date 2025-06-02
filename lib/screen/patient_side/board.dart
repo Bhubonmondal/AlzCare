@@ -23,7 +23,7 @@ class _WhiteBoardState extends State<WhiteBoard> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Drawing"),
+        title: const Text("Painting"),
       ),
       body: SafeArea(
         child: DrawingBoard(

@@ -4,19 +4,29 @@ import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 class FaceGameScreen extends StatelessWidget {
   final List<Map<String, String>> people = [
     {
-      'name': 'Elon Musk',
+      'name': 'Daughter',
       'image':
-      'https://upload.wikimedia.org/wikipedia/commons/e/ed/Elon_Musk_Royal_Society.jpg'
+      'https://i.postimg.cc/fWttyFRQ/Whats-App-Image-2025-06-04-at-12-51-47.jpg'
     },
     {
-      'name': 'Narendra Modi',
+      'name': 'Son',
       'image':
-      'https://upload.wikimedia.org/wikipedia/commons/b/b2/Shri_Narendra_Modi%2C_Prime_Minister_of_India_%283x4_cropped%29.jpg'
+      'https://i.postimg.cc/zGj34Y0K/Whats-App-Image-2025-06-04-at-12-51-48.jpg'
     },
     {
-      'name': 'Sachin Tendulkar',
+      'name': 'Brother',
       'image':
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/The_cricket_legend_Sachin_Tendulkar_at_the_Oval_Maidan_in_Mumbai_During_the_Duke_and_Duchess_of_Cambridge_Visit%2826271019082%29.jpg/1200px-The_cricket_legend_Sachin_Tendulkar_at_the_Oval_Maidan_in_Mumbai_During_the_Duke_and_Duchess_of_Cambridge_Visit%2826271019082%29.jpg'
+      'https://i.postimg.cc/4NpYb9c8/Whats-App-Image-2025-06-04-at-12-51-48-1.jpg'
+    },
+    {
+      'name': 'Wife',
+      'image':
+      'https://i.postimg.cc/RCk3HRW6/Whats-App-Image-2025-06-04-at-12-51-48-3.jpg'
+    },
+    {
+      'name': 'You',
+      'image':
+      'https://i.postimg.cc/FHm7PHgh/Whats-App-Image-2025-06-04-at-12-51-48-2.jpg'
     },
   ];
 
@@ -39,23 +49,23 @@ class FaceGameScreen extends StatelessWidget {
                   child: Image.network(person['image']!, height: 300),
                 ),
                 const SizedBox(height: 20),
-                const Text("Do you know this person?", style: TextStyle(fontSize: 18)),
+                Text("This is ${person['name']}", style: const TextStyle(fontSize: 18)),
                 const SizedBox(height: 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        _showAnswer(context, person['name']!, true);
-                      },
-                      child: const Text("Yes"),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        _showAnswer(context, person['name']!, false);
-                      },
-                      child: const Text("No"),
-                    ),
+                    // ElevatedButton(
+                    //   onPressed: () {
+                    //     _showAnswer(context, person['name']!, true);
+                    //   },
+                    //   child: const Text("Yes"),
+                    // ),
+                    // ElevatedButton(
+                    //   onPressed: () {
+                    //     _showAnswer(context, person['name']!, false);
+                    //   },
+                    //   child: const Text("No"),
+                    // ),
                   ],
                 )
               ],

@@ -66,6 +66,6 @@ This project is licensed under the MIT License.
 ---
 
 **AlzCare** — Caring for minds, supporting hearts, empowering lives! 💙🧠🌈
-
+https://docs.google.com/document/d/1mC4ECGm2zbjZU6xt8d992odUQrQ5sMa4cKGS-a0FgGU/edit?usp=sharing
 
 ![App Thoughts](app_thoughts.jpeg)
